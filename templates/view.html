@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>ECharts</title>
+    <!-- 引入 echarts.js -->
+    <!-- <script src="../statics/echarts.min.js"></script>-->
+    <!-- <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts-all-3.js"></script> -->
+    <script type="text/javascript"
+        src="https://s1.pstatp.com/cdn/expire-1-M/??echarts/4.2.1-rc.3/echarts.min.js"></script>
+    <script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/??jquery/3.4.0/jquery.min.js"></script>
+    <!-- <script src="/statics/jquery-1.11.3.min.js"></script> -->
+</head>
+
+<body>
+    <div id="seach_div" style="width:300px; margin-bottom:30px;">
+        <input type="text" value="杭州" placeholder="请输入城市名称" />
+        <input type="button" value="搜索" />
+    </div>
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="main" style="width:1400px;height:850px;"></div>
+    <script type="text/javascript">
+        var myChart        
+        if (myChart != null && myChart != undefined) {
+            myChart.dispose()
+        }
+        // 基于准备好的dom，初始化echarts实例
+        myChart = echarts.init(document.getElementById('main'));
+
+        // 显示标题，图例和空的坐标轴
+        myChart.setOption({
+            title: {
+                text: '',
+                subtext: '数据来自网络'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            legend: {
+                data: ['评论数', '游记数']
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'value',
+                boundaryGap: [0, 0.01]
+            },
+            yAxis: {
+                type: 'category',
+                data: []//景点名称
+            },
+            series: [
+                {
+                    name: '评论数',
+                    type: 'bar',
+                    data: []
+                },
+                {
+                    name: '游记数',
+                    type: 'bar',
+                    data: []
+                }
+            ]
+        });        
+        
+        getAjax()
+
+        $('#seach_div input[type=button]').click(function () {            
+            getAjax()
+        })
+
+        function getAjax() {
+            var city = $('#seach_div input[type=text]').val()
+            myChart.showLoading();
+            // 异步加载数据
+            $.get('/echarts/' + city).done(function (data) {
+                var name = '';
+                var comments_num = '';
+                var travel_num = '';
+                //alert(typeof(data))
+                data = JSON.parse(data)
+                data = data.sort(compare("comments"));//迎合插件
+                for (i = 0; i < data.length; i++) {
+                    var item = data[i];
+                    name += item.name + ',';
+                    comments_num += item.comments + ',';
+                    travel_num += item.travels + ',';
+                }
+                myChart.hideLoading();
+                // 填入数据
+                myChart.setOption({
+                    title: {
+                        text: city + '热门景点'
+                    },
+                    yAxis: {
+                        data: name.split(',')
+                    },
+                    series: [{
+                        data: comments_num.split(',')
+                    },
+                    {
+                        data: travel_num.split(',')
+                    }]
+                });
+            });
+        }
+        
+        //升序排序  
+        function NumAscSort(a, b) {
+            return a - b;
+        }
+        //降序排序  
+        function NumDescSort(a, b) {
+            return b - a;
+        }  
+        // 对象比较
+        var compare = function(name){  
+            return function (o, p) {
+                var a, b;
+                if (typeof o === "object" && typeof p === "object" && o && p) {
+                    a = o[name];
+                    b = p[name];
+                    if (a === b) {
+                        return 0;
+                    }
+                    if (typeof a === typeof b) {
+                        return a < b ? -1 : 1;
+                    }
+                    return typeof a < typeof b ? -1 : 1;
+                }
+                else {
+                    throw ("error");
+                }
+            }  
+        }  
+    </script>
+    
+</body>
+</html>
