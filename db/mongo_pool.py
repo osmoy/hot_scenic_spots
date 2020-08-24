@@ -12,16 +12,10 @@ class Mongo_pool(object):
         # client['db']['collection']
         self.collection = self.client['scenic_spots']['mafengwo']
 
-    def __del__(self):
-        '''
-        相当于析构函数，方法结束时执行
-        '''
+    def __del__(self):       
         self.client.close()
 
-    def insert_one(self, dic):
-        """插入数据 
-        @dic：字典数据
-        """        
+    def insert_one(self, dic):       
         self.collection.insert_one(dic)
 
     def delete_one(self, obj):

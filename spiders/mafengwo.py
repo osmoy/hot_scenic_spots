@@ -49,13 +49,11 @@ class Mafengwo(object):
                 item['category'] = res[0]
                 item['name'] = res[1]
 
-            item['location'] = li.xpath('./div/div[2]/ul/li[1]/a/text()')[0]
-            # 蜂评(898)
-            item['comments'] = int(re.findall('\((\d+)\)', comment)[0])
-            # 游记(151)
+            item['location'] = li.xpath('./div/div[2]/ul/li[1]/a/text()')[0]            
+            item['comments'] = int(re.findall('\((\d+)\)', comment)[0])            
             item['travels'] = int(re.findall('\((\d+)\)', travels)[0])
             item['get_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            item['city'] = self.city  # 当参数传递进来
+            item['city'] = self.city
             yield item
 
     def save_to_csv(self, data, index):

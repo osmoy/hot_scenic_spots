@@ -1,4 +1,3 @@
-# 随机请求头
 USER_AGENT = [
     "Mozilla/5.0 (Windows NT 10.0; WOW64)",
     'Mozilla/5.0 (Windows NT 6.3; WOW64)',
@@ -24,15 +23,12 @@ USER_AGENT = [
     'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.11 TaoBrowser/3.0 Safari/536.11'
 ]
 
-# 获取代理url地址
 
-
-# mongo配置
 MONGO_HOST = '127.0.0.1'
 MONGO_PORT = 27017
 MONGO_Url = 'mongodb://127.0.0.1:27017'
 
-# mssql数据库配置
+
 SERVER = '127.0.0.1'
 USER_NAME = 'disa'
 PASSWORD = '12345678'
